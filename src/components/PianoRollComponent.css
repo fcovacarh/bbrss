@@ -1,0 +1,28 @@
+#sequencer tr td {
+  border: 1px solid #000;
+  width: 4rem;
+  height: 1rem;
+}
+
+#sequencer {
+  padding: 1rem;
+}
+
+.note-cell {
+  border: 1px solid #fff;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+}
+
+.cell-bar--darken {
+  background-color: #aaa;
+}
+
+.cell-bar {
+  background-color: #fff;
+}
+
+.cell-active {
+  background-color: #ffff00;
+}

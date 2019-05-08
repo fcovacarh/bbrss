@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "adsr-envelope": "^1.0.0",
+    "adsr-envelope-graph": "^0.1.1",
     "react": "^16.8.6",
     "react-circular-input": "^0.1.4",
     "react-dom": "^16.8.6",
+    "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.0",
+    "react-switch": "^5.0.0",
     "tone": "^13.4.9"
   },
   "scripts": {
