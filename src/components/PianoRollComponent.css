@@ -1,10 +1,10 @@
-#sequencer tr td {
+*[id^='sequencer-'] tr td {
   border: 1px solid #000;
   width: 4rem;
   height: 1rem;
 }
 
-#sequencer {
+*[id^='sequencer-'] {
   padding: 1rem;
 }
 

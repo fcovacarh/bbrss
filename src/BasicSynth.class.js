@@ -31,7 +31,6 @@ export default class Instrument {
   };
 
   updateSequence = notes => {
-      console.log(this.sequence);
     if (notes.length !== 0) {
       if(this.active && this.sequence){
         this.sequence.stop('1m');
@@ -41,7 +40,7 @@ export default class Instrument {
           this.synth.triggerAttackRelease(note, "10hz", time);
         },
         notes,
-        "8n"
+        "16n"
       );
       if(this.active) {
         this.sequence.start('1m');

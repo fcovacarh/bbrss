@@ -154,6 +154,7 @@ export default class SynthComponent extends Component {
         {/* Sequencer */}
         <div className="sequencer-wrapper">
           <PianoRollComponent
+            idx={this.state.id}
             updateSynthSequence={notes => this.updateSynthSequence(notes)}
           />
         </div>

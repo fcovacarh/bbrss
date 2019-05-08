@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./PianoRollComponent.css";
-import Tone from 'tone';
 
 const notes = ["B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C"];
 
@@ -71,7 +70,7 @@ export default class PianoRollComponent extends Component {
 
   render() {
     return (
-      <table id="sequencer">
+      <table id={`sequencer-${this.props.idx}`}>
         <tbody>{this.createTable()}</tbody>
       </table>
     );
