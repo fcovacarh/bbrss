@@ -14,6 +14,9 @@ client/coverage
 # production
 client/build
 
+# Debug log from npm
+server/npm-debug.log
+
 # misc
 #server 
 server/.env
