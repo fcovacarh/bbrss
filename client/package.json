@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "adsr-envelope-graph": "^0.1.1",
+    "axios": "^0.18.0",
+    "dotenv-cli": "^2.0.0",
     "react": "^16.8.6",
     "react-circular-input": "^0.1.4",
     "react-dom": "^16.8.6",
