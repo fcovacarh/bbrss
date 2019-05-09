@@ -1,6 +1,6 @@
 import Tone from "tone";
 
-export default class Instrument {
+export default class Synth {
   constructor(id, oscType) {
     this.id = id;
     this.synth = new Tone.Synth(oscType).toMaster();
@@ -45,5 +45,5 @@ export default class Instrument {
         this.sequence.start('4n');
       }
     }
-  };
+  }
 }
