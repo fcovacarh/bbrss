@@ -4,6 +4,17 @@ import "./PianoRollComponent.css";
 const notes = ["B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C"];
 
 export default class PianoRollComponent extends Component {
+  state = {
+    sequence: new Array(16).fill(null)
+  };
+
+  toNoteScaleArr(noteScaleStr) {
+    return [
+      noteScaleStr.replace(/[0-9]/g, ""),
+      noteScaleStr.replace(/[^0-9]/g, "")
+    ];
+  }
+
   createTable() {
     const initialScale = 3,
       toScale = 4,
@@ -22,7 +33,15 @@ export default class PianoRollComponent extends Component {
 
         for (let j = 0; j < cols; j++) {
           if (j % 4 === 0) step = !step;
-          let classNameString = step ? "cell-bar--darken" : 'cell-bar';
+          let classNameString = step ? "cell-bar--darken" : "cell-bar";
+          let noteAndScale = this.state.sequence[j];
+          if (noteAndScale) {
+            let noteScaleArr = this.toNoteScaleArr(noteAndScale);
+            if (notes[i] === noteScaleArr[0] && scale === +noteScaleArr[1]) {
+              classNameString += " cell-active";
+            }
+          }
+
           row.push(
             <td
               key={notes[i] + scale + j}
@@ -42,30 +61,29 @@ export default class PianoRollComponent extends Component {
 
   activateCell(e) {
     const element = e.target;
-    const step = element.getAttribute('step');
-    const otherCell = document.querySelector(`[step="${step}"]`);
-    if(otherCell.getAttribute('step') !== step) { console.log('wololo'); otherCell.classList.remove('.cell-active') }
-    element.classList.toggle("cell-active");
-    this.reReadSequence();
-  }
+    const step = element.getAttribute("step");
+    const note = element.getAttribute("note");
+    const scale = element.getAttribute("scale");
+    const newSequence = [...this.state.sequence];
 
-  reReadSequence() {
-    const cells = document.querySelectorAll(".cell-active");
-    let sequence = new Array(16).fill(null);
-
-    cells.forEach(cell => {
-      let step = cell.getAttribute("step");
-      let note = cell.getAttribute("note");
-      let scale = cell.getAttribute("scale");
-      if (typeof sequence[step] === "string" && sequence[step].length > 0) {
-        sequence[step] = [sequence[step], [note + scale]];
-      } else if (Array.isArray(sequence[step])) {
-        sequence[step].push([note + scale]);
+    if(newSequence[step]){
+      const [stepNote, stepScale] = this.toNoteScaleArr(newSequence[step]);
+      if(note === stepNote && scale === stepScale) {
+        newSequence[step] = null;
       } else {
-        sequence[step] = [note + scale];
+        newSequence[step] = note + scale;
       }
-    });
-    this.props.updateSynthSequence(sequence);
+    } else {
+      newSequence[step] = note + scale;
+    }
+
+    this.setState(
+      {
+        ...this.state,
+        sequence: newSequence
+      },
+      this.props.updateSynthSequence(newSequence)
+    );
   }
 
   render() {
