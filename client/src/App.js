@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import Song from "./Song.class.js";
+import Song from "./classes/Song.class.js";
 import SynthComponent from "./components/SynthComponent";
 
 export default class App extends React.Component {

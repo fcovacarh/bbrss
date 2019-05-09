@@ -3,7 +3,7 @@ import BasicSynth from './BasicSynth.class.js';
 
 class Song {
   constructor() {
-    this.tempo = 128;
+    this.tempo = 130;
     this.instruments = [];
     this.init();
   }
