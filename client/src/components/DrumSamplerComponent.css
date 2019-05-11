@@ -1,0 +1,13 @@
+.sampler {
+    width: 80vw;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sampler-controls {
+    padding: 1rem;
+}

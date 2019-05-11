@@ -1,0 +1,41 @@
+*[id^='sampler-sequencer-'] tr td {
+    border: 1px solid #000;
+    width: 4rem;
+    height: 1rem;
+  }
+  
+  *[id^='sampler-sequencer-'] {
+    padding: 1rem;
+  }
+  
+  .sequencer-controls {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .clear-button {
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #fff;
+  }
+  
+  .note-cell {
+    border: 1px solid #fff;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .cell-bar--darken {
+    background-color: #aaa;
+  }
+  
+  .cell-bar {
+    background-color: #fff;
+  }
+  
+  .cell-active {
+    background-color: #ffff00;
+  }
+  

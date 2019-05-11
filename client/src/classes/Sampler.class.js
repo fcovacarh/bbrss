@@ -1,49 +1,33 @@
 import Tone from "tone";
+import Instrument from "./Instrument.class";
 
-export default class Sampler {
-  constructor(id) {
-    this.id = id;
-    this.synth = new Tone.Sampler().toMaster();
-    this.sequence = null;
-    this.active = false;
+export default class Sampler extends Instrument {
+  constructor(id, style = "house") {
+    super(id);
+    this.preload(style);
   }
 
-  updateInstrument = props => {
-    this.synth.oscillator.type = props.oscillator.type;
-    this.synth.envelope.attack = props.envelope.attack;
-    this.synth.envelope.decay = props.envelope.decay;
-    this.synth.envelope.sustain = props.envelope.sustain;
-    this.synth.envelope.release = props.envelope.release;
+  updateInstrument = style => {
+    this.preload(style);
   };
 
-  activateInstrument = () => {
-    if (this.active) {
-      if (this.sequence) {
-        this.sequence.stop();
-      }
-    } else {
-      if (this.sequence) {
-        this.sequence.start();
-      }
-    }
-    this.active = !this.active;
+  preload = style => {
+    console.log(`loading ${style}`);
+    let sampler = new Tone.Sampler(
+      {
+        C3: `${style}/kick.mp3`,
+        "C#3": `${style}/snare.wav`,
+        D3: `${style}/hihat.wav`,
+        "D#3": `${style}/openhihat.wav`,
+        E3: `${style}/crash.wav`,
+        F3: `${style}/ride.wav`,
+        "F#3": `${style}/perc.wav`
+      },
+      () => {
+        console.log('loaded');
+        this.instrument = sampler.toMaster();
+      },
+      "./samples/"
+    );
   };
-
-  updateSequence = notes => {
-    if (notes.length !== 0) {
-      if(this.active && this.sequence){
-        this.sequence.stop('4n');
-      }
-      this.sequence = new Tone.Sequence(
-        (time, note) => {
-          this.synth.triggerAttackRelease(note, "10hz", time);
-        },
-        notes,
-        "4n"
-      );
-      if(this.active) {
-        this.sequence.start('4n');
-      }
-    }
-  }
 }

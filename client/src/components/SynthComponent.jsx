@@ -21,7 +21,8 @@ export default class SynthComponent extends Component {
       decay: 0.1,
       sustain: 0.3,
       release: 1
-    }
+    },
+    active: false
   };
 
   componentDidMount() {

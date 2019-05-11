@@ -1,49 +1,93 @@
 import Tone from "tone";
-import BasicSynth from './BasicSynth.class.js';
+import BasicSynth from "./BasicSynth.class.js";
+import Sampler from "./Sampler.class.js";
 
 class Song {
   constructor() {
     this.tempo = 130;
-    this.instruments = [];
+    this.instruments = {
+      synths: [],
+      samplers: []
+    };
     this.init();
   }
 
-  init(){
+  init() {
     Tone.Transport.bpm.value = this.tempo;
   }
 
-  addBasicSynth = (id, type = 'triangle') => {
-    this.instruments.push(new BasicSynth(id, type));
+  //SYNTHS
+  addBasicSynth = (id, type = "triangle") => {
+    this.instruments.synths.push(new BasicSynth(id, type));
     return this.getSynths();
   };
 
   getSynths = () => {
-    return this.instruments;
+    return this.instruments.synths;
   };
 
   getSynth = idx => {
-    return this.instruments[idx];
+    return this.instruments.synths[idx];
   };
 
   updateSynth = (idx, props) => {
-    return this.instruments[idx].updateInstrument(props)
+    return this.instruments.synths[idx].updateInstrument(props);
   };
 
   updateSynthSequence = (idx, notes) => {
-    console.log(idx);
-    this.instruments[idx].updateSequence(notes);
-  }
+    this.instruments.synths[idx].updateSequence(notes);
+  };
 
-  activateSynth = (idx) => {
-    this.instruments[idx].activateInstrument();
+  activateSynth = idx => {
+    this.instruments.synths[idx].activateInstrument();
+  };
+
+  //SAMPLERS
+  addSampler = (id, style = "house") => {
+    this.instruments.samplers.push(new Sampler(id, style));
+    return this.getSamplers();
+  };
+
+  getSamplers = () => {
+    return this.instruments.samplers;
+  };
+
+  getSampler = idx => {
+    return this.instruments.samplers[idx];
+  };
+
+  updateSampler = (idx, style) => {
+    return this.instruments.samplers[idx].updateInstrument(style);
+  };
+
+  updateSamplerSequence = (idx, notes) => {
+    this.instruments.samplers[idx].updateSequence(notes);
+  };
+
+  activateSampler = idx => {
+    this.instruments.samplers[idx].activateInstrument();
+  };
+
+  playInstruments = () => {
+    this.instruments.synths
+    .concat(this.instruments.samplers)
+    .forEach(instrument => {
+      Tone.Transport.scheduleRepeat((time) => {
+        if(instrument && instrument.sequence){
+          instrument.sequence.start();
+        }
+      }, '0:0');
+    });
   };
 
   play = () => {
-    Tone.Transport.start();
+    console.log("playing...");
+    if(Tone.Transport.state === "stopped") {Tone.Transport.start(); this.playInstruments()}
   };
 
   stop = () => {
-    Tone.Transport.stop();
+    console.log("stopped");
+      if(Tone.Transport.state === "started") Tone.Transport.stop();
   };
 }
 
