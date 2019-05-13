@@ -3,6 +3,7 @@ import "./App.css";
 import Song from "./classes/Song.class.js";
 import SynthComponent from "./components/SynthComponent";
 import DrumSamplerComponent from "./components/DrumSamplerComponent";
+import VisualizerComponent from "./components/VisualizerComponent";
 
 export default class App extends React.Component {
   state = {
@@ -84,6 +85,9 @@ export default class App extends React.Component {
         <button onClick={() => this.addNewSampler()}>Add Sampler</button>
         <button onClick={() => this.play()}>Play</button>
         <button onClick={() => this.stop()}>Stop</button>
+        <div className="visualization">
+          <VisualizerComponent />
+        </div>
         <div className="synth-rack">
           {synths.map((synth, idx) => (
             <SynthComponent
