@@ -57,7 +57,12 @@ export default class SequencerComponent extends Component {
         for (let j = 0; j < cols; j++) {
           if (j % 4 === 0) step = !step;
           let classNameString = step ? "cell-bar--darken" : "cell-bar";
-          if (this.state.sequence[j] === notes.key(i)) {
+          if (
+            (!Array.isArray(this.state.sequence[j]) &&
+              this.state.sequence[j] === notes.key(i)) ||
+            (Array.isArray(this.state.sequence[j]) &&
+              this.state.sequence[j].includes(notes.key(i)))
+          ) {
             classNameString += " cell-active";
           }
 
@@ -83,19 +88,27 @@ export default class SequencerComponent extends Component {
     const note = element.getAttribute("note");
     const newSequence = [...this.state.sequence];
 
-    //If there is a note for this step, update to store new note,
-    //if note pressed is same as stored update to null,
-    //else store new note in step
-    if (newSequence[step]) {
+    if (Array.isArray(newSequence[step])) {
+      if (newSequence[step].includes(note)) {
+        const idx = newSequence[step].indexOf(note);
+        newSequence[step][idx] = null;
+      } else {
+        newSequence[step].push(note);
+      }
+      newSequence[step] = newSequence[step].filter(el => el != null);
+      if (newSequence[step].length === 1) {
+        newSequence[step] = newSequence[step][0];
+      }
+    } else {
       if (note === newSequence[step]) {
         newSequence[step] = null;
       } else {
-        newSequence[step] = note;
+        newSequence[step] = newSequence[step]
+          ? [newSequence[step], note]
+          : note;
       }
-    } else {
-      newSequence[step] = note;
     }
-    
+
     this.props.updateSynthSequence(newSequence);
 
     this.setState({

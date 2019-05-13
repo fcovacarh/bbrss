@@ -30,7 +30,7 @@ export default class Instrument {
     } else {
       this.sequence = new Tone.Sequence(
         (time, note) => {
-          this.instrument.triggerAttackRelease(note, "10hz", time);
+          if (this.instrument) this.instrument.triggerAttackRelease(note, "10hz", time);
         },
         notes,
         "16n"
