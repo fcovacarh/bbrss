@@ -85,9 +85,6 @@ export default class App extends React.Component {
         <button onClick={() => this.addNewSampler()}>Add Sampler</button>
         <button onClick={() => this.play()}>Play</button>
         <button onClick={() => this.stop()}>Stop</button>
-        <div className="visualization">
-          <VisualizerComponent />
-        </div>
         <div className="synth-rack">
           {synths.map((synth, idx) => (
             <SynthComponent

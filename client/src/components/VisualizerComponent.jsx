@@ -18,12 +18,6 @@ export default class VisualizerComponent extends Component {
   componentDidMount() {
     const V_WIDTH = 900,
       V_HEIGHT = 500;
-    var canvas = document.createElement("canvas");
-    canvas.id = "visualization-canvas";
-    canvas.width = V_WIDTH;
-    canvas.height = V_HEIGHT;
-    canvas.style.backgroundColor = "#000";
-    document.querySelector("#visualizer-wrapper").appendChild(canvas);
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
@@ -32,11 +26,13 @@ export default class VisualizerComponent extends Component {
       0.4,
       1000
     );
-    this.camera.position.set(0, 6, 0);
+    this.camera.position.set(0, 600, 0);
     this.scene.add(this.camera);
+
+    debugger
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(V_WIDTH, V_HEIGHT);
-    canvas.appendChild(this.renderer.domElement);
+    document.querySelector("#visualizer-wrapper").appendChild(this.renderer.domElement);
 
     var light = new THREE.PointLight(0xffffff);
     light.position.set(-100, 200, 100);
@@ -45,8 +41,8 @@ export default class VisualizerComponent extends Component {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
     const values = this.analyser.getValue();
-    values.forEach(value => {
-      const RADIUS = 120;
+    values.forEach((value, idx) => {
+      const RADIUS = 50;
       const SEGMENTS = 16;
       const RINGS = 16;
 
@@ -61,7 +57,8 @@ export default class VisualizerComponent extends Component {
 
       // Move the Sphere back in Z so we
       // can see it.
-      sphere.position.z = 5;
+      sphere.position.x = (idx%2===0?RADIUS*-1:RADIUS) * idx + 10;
+      sphere.position.z = 50;
 
       // Finally, add the sphere to the scene.
       this.scene.add(sphere);
