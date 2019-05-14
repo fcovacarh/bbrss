@@ -32,7 +32,7 @@ export default class SynthComponent extends Component {
       id: this.props.idx,
       oscillator: this.props.oscillator,
       envelope: this.props.envelope,
-      active: false,
+      active: this.props.active,
       synth: this.props.instrument,
       notes: this.props.notes
     });

@@ -13,7 +13,8 @@ export default class DrumSamplerComponent extends Component {
   componentDidMount() {
     this.setState({
       ...this.state,
-      id: this.props.idx
+      id: this.props.idx,
+      active: this.props.active
     });
   }
 

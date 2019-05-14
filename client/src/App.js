@@ -106,6 +106,7 @@ export default class App extends React.Component {
         idx={idx}
         {...synth.instrument}
         notes={synth.notes}
+        active={synth.active}
         updateSynth={(idx, props) => this.updateSynth(idx, props)}
         updateSynthSequence={(idx, notes) =>
           this.updateSynthSequence(idx, notes)
@@ -123,6 +124,7 @@ export default class App extends React.Component {
         idx={idx}
         {...sampler}
         notes={sampler.notes}
+        active={sampler.active}
         updateSampler={(idx, style) => this.updateSampler(idx, style)}
         updateSamplerSequence={(idx, notes) =>
           this.updateSamplerSequence(idx, notes)
@@ -136,12 +138,12 @@ export default class App extends React.Component {
     return (
       <div id="create-app">
         <div id="instruments-rack">
-          {this.renderSynthsSection()}
-          {this.renderSamplerSection()}
           <div id="add-wrapper">
             <button onClick={() => this.addNewBasicSynth()}>Add Synth</button>
             <button onClick={() => this.addNewSampler()}>Add Sampler</button>
           </div>
+          {this.renderSynthsSection()}
+          {this.renderSamplerSection()}
         </div>
       </div>
     );
