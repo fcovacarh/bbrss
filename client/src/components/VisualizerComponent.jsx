@@ -4,6 +4,9 @@ import * as THREE from "three";
 const OrbitControls = require("three-orbit-controls")(THREE);
 
 export default class VisualizerComponent extends Component {
+  state = {
+    epilepsyMode: false
+  };
   constructor() {
     super();
     this.analyser = new Tone.Analyser("fft", 16);
@@ -12,6 +15,7 @@ export default class VisualizerComponent extends Component {
     this.renderer = null;
     this.sphere = null;
     this.controls = require("three-orbit-controls")(THREE);
+    this.iteration = 0;
     Tone.Master.connect(this.analyser);
   }
 
@@ -20,12 +24,7 @@ export default class VisualizerComponent extends Component {
       V_HEIGHT = window.innerHeight;
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(
-      15,
-      V_WIDTH / V_HEIGHT,
-      1,
-      1000
-    );
+    this.camera = new THREE.PerspectiveCamera(15, V_WIDTH / V_HEIGHT, 1, 1000);
     this.camera.position.set(0, 600, 0);
     this.scene.add(this.camera);
     this.renderer = new THREE.WebGLRenderer();
@@ -62,17 +61,47 @@ export default class VisualizerComponent extends Component {
     this.draw();
   }
 
+  toggleEpilepsyMode = () => {
+    console.log(!this.state.epilepsyMode);
+    this.setState({
+      ...this.state,
+      epilepsyMode: !this.state.epilepsyMode
+    });
+  };
+
   draw = () => {
     const bassValue = Math.abs(this.analyser.getValue()[0]);
-    this.sphere.rotation.y +=0.1;
-    if(bassValue > 20) this.sphere.scale.set(bassValue/100, bassValue/100, bassValue/100)
+    const highValue = Math.abs(this.analyser.getValue()[15]);
+    const threshold = 16;
+    if (this.state.epilepsyMode) {
+      if (highValue > 20 && this.iteration % threshold === 0) {
+        this.sphere.scale.set(highValue / 80, highValue / 80, highValue / 80);
+      } else {
+        this.sphere.scale.set(16, 16, 16);
+      }
+    } else {
+      if (highValue > 20) {
+        this.sphere.scale.set(highValue / 80, highValue / 80, highValue / 80);
+      } else {
+        this.sphere.scale.set(1, 1, 1);
+      }
+    }
+    this.sphere.rotation.y += 0.5;
     if (this.renderer) this.renderer.render(this.scene, this.camera);
+    this.iteration > threshold ? (this.iteration = 1) : this.iteration++;
     requestAnimationFrame(this.draw);
   };
 
   render() {
     return (
       <React.Fragment>
+        <button
+          id="epilepsy-mode-button"
+          className={this.state.epilepsyMode ? "btn-on" : "btn-off"}
+          onClick={() => this.toggleEpilepsyMode()}
+        >
+          EPILEPSY MODE
+        </button>
         <div id="visualizer-wrapper" />
       </React.Fragment>
     );
