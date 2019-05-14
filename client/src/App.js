@@ -4,6 +4,7 @@ import Song from "./classes/Song.class.js";
 import SynthComponent from "./components/SynthComponent";
 import DrumSamplerComponent from "./components/DrumSamplerComponent";
 import ControlsBar from "./components/ControlsBar";
+import VisualizerComponent from "./components/VisualizerComponent";
 
 export default class App extends React.Component {
   state = {

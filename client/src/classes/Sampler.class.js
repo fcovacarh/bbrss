@@ -4,6 +4,7 @@ import Instrument from "./Instrument.class";
 export default class Sampler extends Instrument {
   constructor(id, style = "house") {
     super(id);
+    this.loaded = false;
     this.preload(style);
   }
 
@@ -12,7 +13,6 @@ export default class Sampler extends Instrument {
   };
 
   preload = style => {
-    console.log(`loading ${style}`);
     let sampler = new Tone.Sampler(
       {
         C3: `${style}/kick.wav`,
@@ -24,7 +24,7 @@ export default class Sampler extends Instrument {
         "F#3": `${style}/perc.wav`
       },
       () => {
-        console.log('loaded');
+        this.loaded = true;
         this.instrument = sampler.toMaster();
       },
       "./samples/"
