@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Tone from "tone";
 import * as THREE from "three";
+import "./VisualizerComponent.css";
+
 const OrbitControls = require("three-orbit-controls")(THREE);
 
 export default class VisualizerComponent extends Component {
@@ -72,16 +74,24 @@ export default class VisualizerComponent extends Component {
   draw = () => {
     const bassValue = Math.abs(this.analyser.getValue()[0]);
     const highValue = Math.abs(this.analyser.getValue()[15]);
-    const threshold = 16;
+    const threshold = 8;
     if (this.state.epilepsyMode) {
-      if (highValue > 20 && this.iteration % threshold === 0) {
-        this.sphere.scale.set(highValue / 80, highValue / 80, highValue / 80);
+      if (bassValue > 20 && this.iteration % threshold === 0) {
+        this.sphere.scale.set(
+          bassValue / 100,
+          bassValue / 100,
+          bassValue / 100
+        );
       } else {
         this.sphere.scale.set(16, 16, 16);
       }
     } else {
-      if (highValue > 20) {
-        this.sphere.scale.set(highValue / 80, highValue / 80, highValue / 80);
+      if (bassValue > 20) {
+        this.sphere.scale.set(
+          bassValue / 100,
+          bassValue / 100,
+          bassValue / 100
+        );
       } else {
         this.sphere.scale.set(1, 1, 1);
       }
@@ -95,14 +105,15 @@ export default class VisualizerComponent extends Component {
   render() {
     return (
       <React.Fragment>
-        <button
-          id="epilepsy-mode-button"
-          className={this.state.epilepsyMode ? "btn-on" : "btn-off"}
-          onClick={() => this.toggleEpilepsyMode()}
-        >
-          EPILEPSY MODE
-        </button>
-        <div id="visualizer-wrapper" />
+        <div id="visualizer-wrapper">
+          <button
+            id="epilepsy-mode-button"
+            className={this.state.epilepsyMode ? "btn-on" : "btn-off"}
+            onClick={() => this.toggleEpilepsyMode()}
+          >
+            EPILEPSY MODE
+          </button>
+        </div>
       </React.Fragment>
     );
   }
