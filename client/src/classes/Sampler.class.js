@@ -15,7 +15,7 @@ export default class Sampler extends Instrument {
     console.log(`loading ${style}`);
     let sampler = new Tone.Sampler(
       {
-        C3: `${style}/kick.mp3`,
+        C3: `${style}/kick.wav`,
         "C#3": `${style}/snare.wav`,
         D3: `${style}/hihat.wav`,
         "D#3": `${style}/openhihat.wav`,

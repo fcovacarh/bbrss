@@ -72,7 +72,7 @@ class Song {
     this.instruments.synths
     .concat(this.instruments.samplers)
     .forEach(instrument => {
-      Tone.Transport.scheduleRepeat((time) => {
+      Tone.Transport.schedule((time) => {
         if(instrument && instrument.sequence){
           instrument.sequence.start();
         }
