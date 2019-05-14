@@ -1,4 +1,5 @@
 import React from "react";
+import { Switch, Route } from "react-router-dom";
 import "./App.css";
 import Song from "./classes/Song.class.js";
 import SynthComponent from "./components/SynthComponent";
@@ -28,7 +29,7 @@ export default class App extends React.Component {
     this.setState({
       ...this.state,
       isPlaying: true
-    })
+    });
   }
 
   stop() {
@@ -36,7 +37,7 @@ export default class App extends React.Component {
     this.setState({
       ...this.state,
       isPlaying: false
-    })
+    });
   }
 
   //SYNTHS
@@ -97,50 +98,76 @@ export default class App extends React.Component {
     this.state.song.activateSampler(idx);
   }
 
-  render() {
+  renderSynthsSection() {
     const synths = this.state.song.getSynths();
+    return synths.map((synth, idx) => (
+      <SynthComponent
+        key={idx}
+        idx={idx}
+        {...synth.instrument}
+        notes={synth.notes}
+        updateSynth={(idx, props) => this.updateSynth(idx, props)}
+        updateSynthSequence={(idx, notes) =>
+          this.updateSynthSequence(idx, notes)
+        }
+        activateSynth={() => this.activateSynth(idx)}
+      />
+    ));
+  }
+
+  renderSamplerSection() {
     const samplers = this.state.song.getSamplers();
+    return samplers.map((sampler, idx) => (
+      <DrumSamplerComponent
+        key={idx}
+        idx={idx}
+        {...sampler}
+        notes={sampler.notes}
+        updateSampler={(idx, style) => this.updateSampler(idx, style)}
+        updateSamplerSequence={(idx, notes) =>
+          this.updateSamplerSequence(idx, notes)
+        }
+        activateSampler={() => this.activateSampler(idx)}
+      />
+    ));
+  }
+
+  renderCreationSection() {
+    return (
+      <div id="create-app">
+        <div id="instruments-rack">
+          {this.renderSynthsSection()}
+          {this.renderSamplerSection()}
+          <div id="add-wrapper">
+            <button onClick={() => this.addNewBasicSynth()}>Add Synth</button>
+            <button onClick={() => this.addNewSampler()}>Add Sampler</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  render() {
     return (
       <div className="App">
-      <ControlsBar 
-        isPlaying={this.state.isPlaying}
-        tempo={this.state.tempo}
-        play={() => this.play()} 
-        stop={() => this.stop()}
-        updateSongTempo={(newTempo) => this.updateSongtempo(newTempo)}
-        addNewBasicSynth={() => this.addNewBasicSynth()}
-        addNewSampler={() => this.addNewSampler()}
-      />
-        <div id="instruments-rack">
-          {synths.map((synth, idx) => (
-            <SynthComponent
-              key={idx}
-              idx={idx}
-              {...synth.instrument}
-              updateSynth={(idx, props) => this.updateSynth(idx, props)}
-              updateSynthSequence={(idx, notes) =>
-                this.updateSynthSequence(idx, notes)
-              }
-              activateSynth={() => this.activateSynth(idx)}
-            />
-          ))}
-          {samplers.map((sampler, idx) => (
-            <DrumSamplerComponent
-              key={idx}
-              idx={idx}
-              {...sampler}
-              updateSampler={(idx, style) => this.updateSampler(idx, style)}
-              updateSamplerSequence={(idx, notes) =>
-                this.updateSamplerSequence(idx, notes)
-              }
-              activateSampler={() => this.activateSampler(idx)}
-            />
-          ))}
-        </div>
-        <div id="add-wrapper">
-          <button onClick={() => this.addNewBasicSynth()}>Add Synth</button>
-          <button onClick={() => this.addNewSampler()}>Add Sampler</button>
-        </div>
+        <ControlsBar
+          isPlaying={this.state.isPlaying}
+          tempo={this.state.tempo}
+          play={() => this.play()}
+          stop={() => this.stop()}
+          updateSongTempo={newTempo => this.updateSongtempo(newTempo)}
+          addNewBasicSynth={() => this.addNewBasicSynth()}
+          addNewSampler={() => this.addNewSampler()}
+        />
+        <Switch>
+          <Route path="/visualizer" component={VisualizerComponent} />
+          <Route
+            path="/"
+            render={() => {
+              return this.renderCreationSection();
+            }}
+          />
+        </Switch>
       </div>
     );
   }

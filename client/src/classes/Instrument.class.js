@@ -6,6 +6,7 @@ export default class Instrument {
     this.instrument = null;
     this.sequence = null;
     this.active = false;
+    this.notes = new Array(16).fill(null);
   }
 
   activateInstrument = () => {
@@ -22,6 +23,7 @@ export default class Instrument {
   };
 
   updateSequence = notes => {
+    this.notes = notes;
     if (this.sequence && notes.length !== 0) {
       notes.forEach((note, idx) => {
         this.sequence.remove(idx);

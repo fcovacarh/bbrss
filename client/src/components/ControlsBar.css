@@ -16,6 +16,10 @@
     text-transform: uppercase;
 }
 
+#controls-bar #navigation button {
+    margin: 1rem;
+}
+
 #controls-bar button.play-btn {
     background-color: #00c525;
 }

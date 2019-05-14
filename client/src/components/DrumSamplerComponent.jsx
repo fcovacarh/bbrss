@@ -46,6 +46,7 @@ export default class DrumSamplerComponent extends Component {
         <div className="sequencer-wrapper">
           <SequencerComponent
             idx={this.state.id}
+            notes={this.props.notes}
             updateSynthSequence={notes => this.updateSamplerSequence(notes)}
           />
         </div>

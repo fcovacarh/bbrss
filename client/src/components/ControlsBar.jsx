@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import {Link} from "react-router-dom";
 import './ControlsBar.css';
+
 
 export default class ControlsBar extends Component {
   render() {
@@ -18,6 +20,10 @@ export default class ControlsBar extends Component {
             value={this.props.tempo}
             onChange={newTempo => this.props.updateSongtempo(newTempo)}
           />
+        </div>
+        <div id="navigation">
+          <Link to="/"><button>CREATE</button></Link>
+          <Link to="/visualizer"><button>VISUALIZE</button></Link>
         </div>
         {playButton}
       </div>
