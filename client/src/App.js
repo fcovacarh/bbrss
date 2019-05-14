@@ -3,11 +3,40 @@ import "./App.css";
 import Song from "./classes/Song.class.js";
 import SynthComponent from "./components/SynthComponent";
 import DrumSamplerComponent from "./components/DrumSamplerComponent";
+import ControlsBar from "./components/ControlsBar";
 
 export default class App extends React.Component {
   state = {
-    song: new Song()
+    song: new Song(),
+    tempo: 130,
+    isPlaying: false
   };
+
+  //SONG
+  updateSongtempo(newTempo) {
+    const tempo = newTempo.target.value;
+    this.state.song.updateTempo(tempo);
+    this.setState({
+      ...this.state,
+      tempo: tempo
+    });
+  }
+
+  play() {
+    this.state.song.play();
+    this.setState({
+      ...this.state,
+      isPlaying: true
+    })
+  }
+
+  stop() {
+    this.state.song.stop();
+    this.setState({
+      ...this.state,
+      isPlaying: false
+    })
+  }
 
   //SYNTHS
   addNewBasicSynth() {
@@ -67,24 +96,21 @@ export default class App extends React.Component {
     this.state.song.activateSampler(idx);
   }
 
-  play() {
-    this.state.song.play();
-  }
-
-  stop() {
-    this.state.song.stop();
-  }
-
   render() {
     const synths = this.state.song.getSynths();
     const samplers = this.state.song.getSamplers();
     return (
       <div className="App">
-        <button onClick={() => this.addNewBasicSynth()}>Add Basic Synth</button>
-        <button onClick={() => this.addNewSampler()}>Add Sampler</button>
-        <button onClick={() => this.play()}>Play</button>
-        <button onClick={() => this.stop()}>Stop</button>
-        <div className="synth-rack">
+      <ControlsBar 
+        isPlaying={this.state.isPlaying}
+        tempo={this.state.tempo}
+        play={() => this.play()} 
+        stop={() => this.stop()}
+        updateSongTempo={(newTempo) => this.updateSongtempo(newTempo)}
+        addNewBasicSynth={() => this.addNewBasicSynth()}
+        addNewSampler={() => this.addNewSampler()}
+      />
+        <div id="instruments-rack">
           {synths.map((synth, idx) => (
             <SynthComponent
               key={idx}
@@ -97,8 +123,6 @@ export default class App extends React.Component {
               activateSynth={() => this.activateSynth(idx)}
             />
           ))}
-        </div>
-        <div className="samplers-rack">
           {samplers.map((sampler, idx) => (
             <DrumSamplerComponent
               key={idx}
@@ -111,6 +135,10 @@ export default class App extends React.Component {
               activateSampler={() => this.activateSampler(idx)}
             />
           ))}
+        </div>
+        <div id="add-wrapper">
+          <button onClick={() => this.addNewBasicSynth()}>Add Synth</button>
+          <button onClick={() => this.addNewSampler()}>Add Sampler</button>
         </div>
       </div>
     );

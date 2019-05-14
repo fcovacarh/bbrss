@@ -1,5 +1,11 @@
+body {
+  background-color: #282c34;
+}
+
 .App {
   text-align: center;
+  width: 100vw;
+  height: 100vh;
 }
 
 .App-logo {
@@ -23,11 +29,30 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#instruments-rack {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+#add-wrapper {
+  padding: 2rem;
+  border-radius: 1rem;
+  background-color: #282c34;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 100px;
+  border: 2px solid #000;
+  margin: 1rem;
+}
+
+#add-wrapper button {
+  width: 100%;
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #fff;
+  text-transform: uppercase;
+  margin: 1rem;
 }

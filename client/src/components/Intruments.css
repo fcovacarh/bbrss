@@ -1,12 +1,11 @@
 .synth {
-    width: 40vw;
+    width: 80vw;
     background-color: #000;
     color: #fff;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 1rem;
     border: 1px solid #fff;
     border-radius: 1rem;
 }

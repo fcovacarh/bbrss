@@ -12,7 +12,22 @@ class Song {
     this.init();
   }
 
-  init() {
+  init = () => {
+    Tone.Transport.bpm.value = this.tempo;
+  }
+
+  play = () => {
+    console.log("playing...");
+    if(Tone.Transport.state === "stopped") {Tone.Transport.start(); this.playInstruments()}
+  };
+
+  stop = () => {
+    console.log("stopped");
+      if(Tone.Transport.state === "started") Tone.Transport.stop();
+  };
+
+  updateTempo = (newTempo) => {
+    this.tempo = newTempo;
     Tone.Transport.bpm.value = this.tempo;
   }
 
@@ -78,16 +93,6 @@ class Song {
         }
       }, '0:0');
     });
-  };
-
-  play = () => {
-    console.log("playing...");
-    if(Tone.Transport.state === "stopped") {Tone.Transport.start(); this.playInstruments()}
-  };
-
-  stop = () => {
-    console.log("stopped");
-      if(Tone.Transport.state === "started") Tone.Transport.stop();
   };
 }
 
