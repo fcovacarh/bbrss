@@ -111,7 +111,7 @@ export default class VisualizerComponent extends Component {
             className={this.state.epilepsyMode ? "btn-on" : "btn-off"}
             onClick={() => this.toggleEpilepsyMode()}
           >
-            EPILEPSY MODE
+            EPILEPSY MODE: {this.state.epilepsyMode ? 'ON' : 'OFF'}
           </button>
         </div>
       </React.Fragment>

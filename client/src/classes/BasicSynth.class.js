@@ -5,7 +5,6 @@ export default class BasicSynth extends Instrument {
   constructor(id, oscType) {
     super(id);
     this.instrument = new Tone.Synth(oscType).toMaster();
-    console.log(this);
   }
 
   updateInstrument = props => {
@@ -16,4 +15,17 @@ export default class BasicSynth extends Instrument {
     this.instrument.envelope.release = props.envelope.release;
     return this.instrument;
   };
+
+  getSynthData = () => {
+    return {
+      notes: this.notes,
+      oscillator: {type: this.instrument.oscillator.type},
+      envelope: {
+        attack: this.instrument.envelope.attack,
+        decay: this.instrument.envelope.decay,
+        sustain: this.instrument.envelope.sustain,
+        release: this.instrument.envelope.release
+      }
+    }
+  }
 }

@@ -40,6 +40,64 @@ export default class App extends React.Component {
     });
   }
 
+  exportSongData() {
+    console.log(JSON.stringify(this.state.song.exportSongData()));
+  }
+
+  loadSongData() {
+    this.state.song.stop();
+    //Simulate GET call from backend
+    const songData = JSON.parse(
+      `{
+        "tempo":130,
+        "instruments":{
+          "synths":[
+            {
+              "notes":[
+                "B4",null,null,null,"A4",null,null,null,"B4",null,null,null,"A4",null,null,null
+              ],
+              "oscillator":{"type":"sine"},
+              "envelope":{
+                "attack":0.2690077039239749,
+                "decay":0.1,
+                "sustain":0.5,
+                "release":1
+              }
+            }
+          ],
+          "samplers":[
+            {
+              "notes":["C3",null,"D3",null,"C#3",null,"D3",null,"C3",null,"D3",null,"C#3",null,"D3",null],
+              "style":"house"
+            }
+          ]
+        }
+      }`
+    );
+
+    const newSong = new Song();
+    newSong.updateTempo(songData.tempo);
+
+    const synthsData = songData.instruments.synths;
+    synthsData.forEach((synthData, idx) => {
+      newSong.addBasicSynth(idx, synthData.oscillator.type);
+      const { oscillator, envelope } = { ...synthData };
+      newSong.updateSynth(idx, { oscillator, envelope });
+      newSong.updateSynthSequence(idx, synthData.notes);
+    });
+
+    const samplersData = songData.instruments.samplers;
+    samplersData.forEach((samplerData, idx) => {
+      newSong.addSampler(idx, samplerData.style);
+      newSong.updateSamplerSequence(idx, samplerData.notes);
+    });
+
+    this.setState({
+      ...this.state,
+      song: newSong
+    });
+  }
+
   //SYNTHS
   addNewBasicSynth() {
     const newSong = { ...this.state.song };
@@ -170,6 +228,8 @@ export default class App extends React.Component {
             }}
           />
         </Switch>
+        <button onClick={() => this.loadSongData()}>LOAD</button>
+        <button onClick={() => this.exportSongData()}>SAVE</button>
       </div>
     );
   }

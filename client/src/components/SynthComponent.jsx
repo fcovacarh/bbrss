@@ -134,9 +134,8 @@ export default class SynthComponent extends Component {
           <div className="envelope-knobs">
             {Object.entries(envelopeControls).map((value, idx) => {
               return (
-                <div className="knob-wrapper">
+                <div key={value[0]} className="knob-wrapper">
                   <CircularInput
-                    key={value[0]}
                     radius={35}
                     value={value[1]}
                     onChange={e => this.updateEnvelope(value[0], e)}

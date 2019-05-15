@@ -7,9 +7,9 @@
 }
 
 #epilepsy-mode-button.btn-on {
-  background-color: #000;
+  background-color: #00c525;
 }
 
-#epilepsy-mode-button.btn-on {
-  background-color: #000;
+#epilepsy-mode-button.btn-off {
+  background-color: #ff331c;
 }
