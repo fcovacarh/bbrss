@@ -5,6 +5,7 @@ const notes = ["B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C"];
 
 export default class PianoRollComponent extends Component {
   state = {
+    id: this.props.idx,
     sequence: this.props.notes
   };
 
@@ -22,13 +23,13 @@ export default class PianoRollComponent extends Component {
       cols = 16;
     let table = [];
     table.push(
-      <thead>
-        <tr>
-          <td className="sequencer-controls" colSpan={cols}>
-            <button className="clear-button" onClick={() => this.clear()}>CLEAR</button>
-          </td>
-        </tr>
-      </thead>
+      <tr>
+        <td className="sequencer-controls" colSpan={cols}>
+          <button className="clear-button" onClick={() => this.clear()}>
+            CLEAR
+          </button>
+        </td>
+      </tr>
     );
     for (let scale = toScale; scale > initialScale - 1; scale--) {
       for (let i = 0; i < rows; i++) {
@@ -78,9 +79,9 @@ export default class PianoRollComponent extends Component {
     //If there is a note for this step, update to store new note,
     //if note pressed is same as stored update to null,
     //else store new note in step
-    if(newSequence[step]){
+    if (newSequence[step]) {
       const [stepNote, stepScale] = this.toNoteScaleArr(newSequence[step]);
-      if(note === stepNote && scale === stepScale) {
+      if (note === stepNote && scale === stepScale) {
         newSequence[step] = null;
       } else {
         newSequence[step] = note + scale;
@@ -98,13 +99,15 @@ export default class PianoRollComponent extends Component {
     );
   }
 
-  clear(){
+  clear() {
     const newSequence = new Array(16).fill(null);
-    this.setState({
-      ...this.state,
-      sequence: newSequence
-    }, 
-    this.props.updateSynthSequence(newSequence));
+    this.setState(
+      {
+        ...this.state,
+        sequence: newSequence
+      },
+      this.props.updateSynthSequence(newSequence)
+    );
   }
 
   render() {

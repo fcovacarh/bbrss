@@ -4,6 +4,7 @@ import Instrument from "./Instrument.class";
 export default class Sampler extends Instrument {
   constructor(id, style = "house") {
     super(id);
+    this.style = style;
     this.loaded = false;
     this.preload(style);
   }
@@ -30,4 +31,11 @@ export default class Sampler extends Instrument {
       "./samples/"
     );
   };
+
+  getSamplerData = () => {
+    return {
+      notes: this.notes,
+      style: this.style
+    }
+  }
 }

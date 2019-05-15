@@ -5,7 +5,6 @@ import './ControlsBar.css';
 
 export default class ControlsBar extends Component {
   render() {
-    console.log(this.props);
     let playButton = <button className="play-btn" onClick={() => this.props.play()}>Play</button>;
     if (this.props.isPlaying) {
       playButton = <button className="stop-btn" onClick={() => this.props.stop()}>Stop</button>;

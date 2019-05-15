@@ -94,6 +94,22 @@ class Song {
       }, '0:0');
     });
   };
+
+  exportSongData = () => {
+    const synths = [...this.instruments.synths].map(synth => synth.getSynthData());
+    const samplers = [...this.instruments.samplers].map(sampler => sampler.getSamplerData());
+    return {
+      tempo: this.tempo,
+      instruments: {
+        synths,
+        samplers
+      }
+    }
+  };
+
+  loadSongData = songData => {
+    
+  };
 }
 
 export default Song;
