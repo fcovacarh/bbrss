@@ -6,13 +6,46 @@ import SynthComponent from "./components/SynthComponent";
 import DrumSamplerComponent from "./components/DrumSamplerComponent";
 import ControlsBar from "./components/ControlsBar";
 import VisualizerComponent from "./components/VisualizerComponent";
+import AuthComponent from "./components/AuthComponent";
+import Services from "./tools/Services";
 
 export default class App extends React.Component {
+  constructor() {
+    super();
+    this.services = new Services();
+  }
+
   state = {
+    user: null,
     song: new Song(),
     tempo: 130,
     isPlaying: false
   };
+
+  componentDidMount() {
+    this.fetchUser();
+  }
+
+  login() {
+    this.fetchUser();
+  }
+
+  fetchUser() {
+    this.services
+      .isLoggedIn()
+      .then(data => {
+        this.setState({
+          ...this.state,
+          user: data
+        });
+      })
+      .catch(err => {
+        this.setState({
+          ...this.state,
+          user: null
+        });
+      });
+  }
 
   //SONG
   updateSongtempo(newTempo) {
@@ -46,6 +79,7 @@ export default class App extends React.Component {
 
   loadSongData() {
     this.state.song.stop();
+
     //Simulate GET call from backend
     const songData = JSON.parse(
       `{
@@ -207,6 +241,10 @@ export default class App extends React.Component {
     );
   }
 
+  renderAuthComponent() {
+    return <AuthComponent login={() => this.login()} />;
+  }
+
   render() {
     return (
       <div className="App">
@@ -220,9 +258,10 @@ export default class App extends React.Component {
           addNewSampler={() => this.addNewSampler()}
         />
         <Switch>
+          <Route path="/" render={() => this.renderAuthComponent()} />
           <Route path="/visualizer" component={VisualizerComponent} />
           <Route
-            path="/"
+            path="/creator"
             render={() => {
               return this.renderCreationSection();
             }}
