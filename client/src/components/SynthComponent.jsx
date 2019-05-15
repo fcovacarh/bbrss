@@ -22,6 +22,7 @@ export default class SynthComponent extends Component {
       sustain: 0.3,
       release: 1
     },
+    notes: new Array(16).fill(null),
     active: false
   };
 
@@ -31,7 +32,9 @@ export default class SynthComponent extends Component {
       id: this.props.idx,
       oscillator: this.props.oscillator,
       envelope: this.props.envelope,
-      active: false
+      active: this.props.active,
+      synth: this.props.instrument,
+      notes: this.props.notes
     });
   }
 
@@ -156,6 +159,7 @@ export default class SynthComponent extends Component {
         <div className="sequencer-wrapper">
           <PianoRollComponent
             idx={this.state.id}
+            notes={this.props.notes}
             updateSynthSequence={notes => this.updateSynthSequence(notes)}
           />
         </div>

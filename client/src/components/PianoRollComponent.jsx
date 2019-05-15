@@ -5,7 +5,7 @@ const notes = ["B", "A#", "A", "G#", "G", "F#", "F", "E", "D#", "D", "C#", "C"];
 
 export default class PianoRollComponent extends Component {
   state = {
-    sequence: new Array(16).fill(null)
+    sequence: this.props.notes
   };
 
   toNoteScaleArr(noteScaleStr) {

@@ -13,7 +13,8 @@ export default class DrumSamplerComponent extends Component {
   componentDidMount() {
     this.setState({
       ...this.state,
-      id: this.props.idx
+      id: this.props.idx,
+      active: this.props.active
     });
   }
 
@@ -46,6 +47,7 @@ export default class DrumSamplerComponent extends Component {
         <div className="sequencer-wrapper">
           <SequencerComponent
             idx={this.state.id}
+            notes={this.props.notes}
             updateSynthSequence={notes => this.updateSamplerSequence(notes)}
           />
         </div>

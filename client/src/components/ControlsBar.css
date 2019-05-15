@@ -1,0 +1,29 @@
+#controls-bar {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #000;
+    color: #fff;
+    height: 5rem;
+}
+
+#controls-bar button {
+    padding: 1rem;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    text-transform: uppercase;
+}
+
+#controls-bar #navigation button {
+    margin: 1rem;
+}
+
+#controls-bar button.play-btn {
+    background-color: #00c525;
+}
+
+#controls-bar button.stop-btn {
+    background-color: #ff331c;
+}

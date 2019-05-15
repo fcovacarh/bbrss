@@ -12,7 +12,22 @@ class Song {
     this.init();
   }
 
-  init() {
+  init = () => {
+    Tone.Transport.bpm.value = this.tempo;
+  }
+
+  play = () => {
+    console.log("playing...");
+    if(Tone.Transport.state === "stopped") {Tone.Transport.start(); this.playInstruments()}
+  };
+
+  stop = () => {
+    console.log("stopped");
+      if(Tone.Transport.state === "started") Tone.Transport.stop();
+  };
+
+  updateTempo = (newTempo) => {
+    this.tempo = newTempo;
     Tone.Transport.bpm.value = this.tempo;
   }
 
@@ -72,22 +87,12 @@ class Song {
     this.instruments.synths
     .concat(this.instruments.samplers)
     .forEach(instrument => {
-      Tone.Transport.scheduleRepeat((time) => {
+      Tone.Transport.schedule((time) => {
         if(instrument && instrument.sequence){
           instrument.sequence.start();
         }
       }, '0:0');
     });
-  };
-
-  play = () => {
-    console.log("playing...");
-    if(Tone.Transport.state === "stopped") {Tone.Transport.start(); this.playInstruments()}
-  };
-
-  stop = () => {
-    console.log("stopped");
-      if(Tone.Transport.state === "started") Tone.Transport.stop();
   };
 }
 

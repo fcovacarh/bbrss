@@ -19,7 +19,7 @@ const notes = {
 
 export default class SequencerComponent extends Component {
   state = {
-    sequence: new Array(16).fill(null)
+    sequence: this.props.notes
   };
 
   toNoteScaleArr(noteScaleStr) {

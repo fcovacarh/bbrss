@@ -1,0 +1,15 @@
+#epilepsy-mode-button {
+  padding: 1rem;
+  position: absolute;
+  background-color: #000;
+  border: 1px solid #fff;
+  color: #fff;
+}
+
+#epilepsy-mode-button.btn-on {
+  background-color: #000;
+}
+
+#epilepsy-mode-button.btn-on {
+  background-color: #000;
+}
