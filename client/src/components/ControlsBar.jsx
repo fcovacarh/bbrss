@@ -22,7 +22,7 @@ export default class ControlsBar extends Component {
           />
         </div>
         <div id="navigation">
-          <Link to="/"><button>CREATION MODE</button></Link>
+          <Link to="/creator"><button>CREATION MODE</button></Link>
           <Link to="/visualizer"><button>VISUALIZATION MODE</button></Link>
         </div>
         {playButton}

@@ -2,12 +2,11 @@ import React from "react";
 import { Switch, Route } from "react-router-dom";
 import "./App.css";
 import Song from "./classes/Song.class.js";
-import SynthComponent from "./components/SynthComponent";
-import DrumSamplerComponent from "./components/DrumSamplerComponent";
 import ControlsBar from "./components/ControlsBar";
 import VisualizerComponent from "./components/VisualizerComponent";
 import AuthComponent from "./components/AuthComponent";
 import Services from "./tools/Services";
+import CreatorComponent from "./components/CreatorComponent";
 
 export default class App extends React.Component {
   constructor() {
@@ -133,6 +132,10 @@ export default class App extends React.Component {
   }
 
   //SYNTHS
+  getSynths() {
+    return this.state.song.getSynths();
+  }
+
   addNewBasicSynth() {
     const newSong = { ...this.state.song };
     newSong.instruments = this.state.song.addBasicSynth(
@@ -162,6 +165,10 @@ export default class App extends React.Component {
   }
 
   //SAMPLER
+  getSamplers() {
+    return this.state.song.getSamplers();
+  }
+
   addNewSampler() {
     const newSong = { ...this.state.song };
     newSong.instruments = this.state.song.addSampler(
@@ -190,80 +197,43 @@ export default class App extends React.Component {
     this.state.song.activateSampler(idx);
   }
 
-  renderSynthsSection() {
-    const synths = this.state.song.getSynths();
-    return synths.map((synth, idx) => (
-      <SynthComponent
-        key={idx}
-        idx={idx}
-        {...synth.instrument}
-        notes={synth.notes}
-        active={synth.active}
-        updateSynth={(idx, props) => this.updateSynth(idx, props)}
-        updateSynthSequence={(idx, notes) =>
-          this.updateSynthSequence(idx, notes)
-        }
-        activateSynth={() => this.activateSynth(idx)}
-      />
-    ));
-  }
-
-  renderSamplerSection() {
-    const samplers = this.state.song.getSamplers();
-    return samplers.map((sampler, idx) => (
-      <DrumSamplerComponent
-        key={idx}
-        idx={idx}
-        {...sampler}
-        notes={sampler.notes}
-        active={sampler.active}
-        updateSampler={(idx, style) => this.updateSampler(idx, style)}
-        updateSamplerSequence={(idx, notes) =>
-          this.updateSamplerSequence(idx, notes)
-        }
-        activateSampler={() => this.activateSampler(idx)}
-      />
-    ));
-  }
-
-  renderCreationSection() {
-    return (
-      <div id="create-app">
-        <div id="instruments-rack">
-          <div id="add-wrapper">
-            <button onClick={() => this.addNewBasicSynth()}>Add Synth</button>
-            <button onClick={() => this.addNewSampler()}>Add Sampler</button>
-          </div>
-          {this.renderSynthsSection()}
-          {this.renderSamplerSection()}
-        </div>
-      </div>
-    );
-  }
-
   renderAuthComponent() {
     return <AuthComponent login={() => this.login()} />;
+  }
+
+  renderCreatorComponent() {
+    return <CreatorComponent 
+      getSynths={()=>this.getSynths()}
+      getSamplers={()=>this.getSamplers()}
+      addNewBasicSynth={() => this.addNewBasicSynth()}
+      updateSynth={(idx, props)=>this.updateSynth(idx, props)}
+      updateSynthSequence={(idx, notes)=>this.updateSynthSequence(idx, notes)}
+      activateSynth={(idx)=>this.activateSynth(idx)}
+      addNewSampler={() => this.addNewSampler()}
+      updateSampler={(idx, style)=>this.updateSampler(idx, style)}
+      updateSamplerSequence={(idx, notes)=>this.updateSamplerSequence(idx, notes)}
+      activateSampler={(idx)=>this.activateSampler(idx)}
+    />
   }
 
   render() {
     return (
       <div className="App">
         <ControlsBar
+          user={this.state.user}
           isPlaying={this.state.isPlaying}
           tempo={this.state.tempo}
           play={() => this.play()}
           stop={() => this.stop()}
           updateSongTempo={newTempo => this.updateSongtempo(newTempo)}
-          addNewBasicSynth={() => this.addNewBasicSynth()}
-          addNewSampler={() => this.addNewSampler()}
         />
         <Switch>
-          <Route path="/" render={() => this.renderAuthComponent()} />
+          <Route exact path="/" render={() => this.renderAuthComponent()} />
           <Route path="/visualizer" component={VisualizerComponent} />
           <Route
             path="/creator"
             render={() => {
-              return this.renderCreationSection();
+              return this.renderCreatorComponent();
             }}
           />
         </Switch>
