@@ -39,9 +39,14 @@ class App extends React.Component {
 
   login(credentials) {
     this.services.login(credentials).then(data => {
-      this.setState({
-        ...this.state,
-        user: data
+      const user = data;
+      this.services.getUserSongs().then(data => {
+        const newUserSongs = [...this.state.userSongs].concat(data);
+        this.setState({
+          ...this.state,
+          user: user,
+          userSongs: newUserSongs
+        });
       });
     });
   }
@@ -107,7 +112,7 @@ class App extends React.Component {
     console.log(this.state.song.exportSongData(name));
     this.services.saveSong(this.state.song.exportSongData(name)).then(data => {
       this.fetchUser();
-      this.props.history.push('/creator');
+      this.props.history.push("/creator");
     });
   }
 
@@ -122,12 +127,15 @@ class App extends React.Component {
   }
 
   newSong() {
-    this.setState({
-      ...this.state,
-      song: new Song(),
-      tempo: 130,
-      isPlaying: false
-    }, this.props.history.push('/creator'));
+    this.setState(
+      {
+        ...this.state,
+        song: new Song(),
+        tempo: 130,
+        isPlaying: false
+      },
+      this.props.history.push("/creator")
+    );
   }
 
   loadSongData(songData) {
@@ -235,9 +243,9 @@ class App extends React.Component {
 
   renderAuthComponent() {
     return !this.state.user ? (
-      <AuthComponent 
-        login={credentials => this.login(credentials)} 
-        signup={credentials => this.signup(credentials)} 
+      <AuthComponent
+        login={credentials => this.login(credentials)}
+        signup={credentials => this.signup(credentials)}
       />
     ) : (
       <Redirect to="/creator" />

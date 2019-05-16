@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./SaveComponent.css";
 
 export default class SaveComponent extends Component {
   submit(e) {
@@ -11,7 +12,7 @@ export default class SaveComponent extends Component {
         <form onSubmit={e => this.submit(e)}>
           <div className="form-logo">BBRSS</div>
           <div className="input-group">
-            <label htmlFor="name">NAME:</label>
+            <label htmlFor="name">SONG NAME:</label>
             <input name="name" type="text" />
           </div>
           <button>SAVE</button>
