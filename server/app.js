@@ -32,7 +32,7 @@ const debug = require("debug")(
 
 const app = express();
 
-const whitelist = ["http://localhost:3000", "https://bbrss.herokuapp.com/"];
+const whitelist = ["http://localhost:3000", "https://bbrss.herokuapp.com"];
 
 const corsOptions = {
   origin: function(origin, callback) {
