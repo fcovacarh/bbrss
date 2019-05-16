@@ -1,22 +1,85 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import "./App.css";
 import Song from "./classes/Song.class.js";
-import SynthComponent from "./components/SynthComponent";
-import DrumSamplerComponent from "./components/DrumSamplerComponent";
 import ControlsBar from "./components/ControlsBar";
 import VisualizerComponent from "./components/VisualizerComponent";
+import AuthComponent from "./components/AuthComponent";
+import Services from "./tools/Services";
+import CreatorComponent from "./components/CreatorComponent";
+import LoadComponent from "./components/LoadComponent";
+import SaveComponent from "./components/SaveComponent";
 
-export default class App extends React.Component {
+class App extends React.Component {
+  constructor() {
+    super();
+    this.services = new Services();
+  }
+
   state = {
+    user: null,
     song: new Song(),
+    userSongs: [],
     tempo: 130,
     isPlaying: false
   };
 
+  componentDidMount() {
+    this.fetchUser();
+  }
+
+  signup(credentials) {
+    this.services.signup(credentials).then(data => {
+      this.setState({
+        ...this.state,
+        user: data
+      });
+    });
+  }
+
+  login(credentials) {
+    this.services.login(credentials).then(data => {
+      this.setState({
+        ...this.state,
+        user: data
+      });
+    });
+  }
+
+  logout() {
+    this.services.logout().then(data => {
+      this.setState({
+        ...this.state,
+        user: null
+      });
+    });
+  }
+
+  fetchUser() {
+    this.services
+      .isLoggedIn()
+      .then(data => {
+        const user = data;
+        this.services.getUserSongs().then(data => {
+          const newUserSongs = [...this.state.userSongs].concat(data);
+          this.setState({
+            ...this.state,
+            user: user,
+            userSongs: newUserSongs
+          });
+        });
+      })
+      .catch(err => {
+        this.setState({
+          ...this.state,
+          user: null
+        });
+      });
+  }
+
   //SONG
   updateSongtempo(newTempo) {
-    const tempo = newTempo.target.value;
+    const tempo = newTempo;
     this.state.song.updateTempo(tempo);
     this.setState({
       ...this.state,
@@ -40,48 +103,48 @@ export default class App extends React.Component {
     });
   }
 
-  exportSongData() {
-    console.log(JSON.stringify(this.state.song.exportSongData()));
+  exportSongData(name) {
+    console.log(this.state.song.exportSongData(name));
+    this.services.saveSong(this.state.song.exportSongData(name)).then(data => {
+      this.fetchUser();
+      this.props.history.push('/creator');
+    });
   }
 
-  loadSongData() {
+  getUserSongs() {
+    this.services.getUserSongs().then(data => {
+      const newUserSongs = [...this.state.userSongs].concat(data);
+      this.setState({
+        ...this.state,
+        userSongs: newUserSongs
+      });
+    });
+  }
+
+  newSong() {
+    this.setState({
+      ...this.state,
+      song: new Song(),
+      tempo: 130,
+      isPlaying: false
+    }, this.props.history.push('/creator'));
+  }
+
+  loadSongData(songData) {
     this.state.song.stop();
-    //Simulate GET call from backend
-    const songData = JSON.parse(
-      `{
-        "tempo":130,
-        "instruments":{
-          "synths":[
-            {
-              "notes":[
-                "B4",null,null,null,"A4",null,null,null,"B4",null,null,null,"A4",null,null,null
-              ],
-              "oscillator":{"type":"sine"},
-              "envelope":{
-                "attack":0.2690077039239749,
-                "decay":0.1,
-                "sustain":0.5,
-                "release":1
-              }
-            }
-          ],
-          "samplers":[
-            {
-              "notes":["C3",null,"D3",null,"C#3",null,"D3",null,"C3",null,"D3",null,"C#3",null,"D3",null],
-              "style":"house"
-            }
-          ]
-        }
-      }`
-    );
 
     const newSong = new Song();
     newSong.updateTempo(songData.tempo);
 
     const synthsData = songData.instruments.synths;
     synthsData.forEach((synthData, idx) => {
-      newSong.addBasicSynth(idx, synthData.oscillator.type);
       const { oscillator, envelope } = { ...synthData };
+      if (oscillator.oscType) {
+        oscillator.type = oscillator.oscType;
+        delete oscillator.oscType;
+      }
+
+      newSong.addBasicSynth(idx, oscillator.type);
       newSong.updateSynth(idx, { oscillator, envelope });
       newSong.updateSynthSequence(idx, synthData.notes);
     });
@@ -92,13 +155,23 @@ export default class App extends React.Component {
       newSong.updateSamplerSequence(idx, samplerData.notes);
     });
 
-    this.setState({
-      ...this.state,
-      song: newSong
-    });
+    this.setState(
+      {
+        ...this.state,
+        song: newSong,
+        tempo: songData.tempo
+      },
+      () => {
+        this.props.history.push("/creator");
+      }
+    );
   }
 
   //SYNTHS
+  getSynths() {
+    return this.state.song.getSynths();
+  }
+
   addNewBasicSynth() {
     const newSong = { ...this.state.song };
     newSong.instruments = this.state.song.addBasicSynth(
@@ -128,6 +201,10 @@ export default class App extends React.Component {
   }
 
   //SAMPLER
+  getSamplers() {
+    return this.state.song.getSamplers();
+  }
+
   addNewSampler() {
     const newSong = { ...this.state.song };
     newSong.instruments = this.state.song.addSampler(
@@ -156,54 +233,60 @@ export default class App extends React.Component {
     this.state.song.activateSampler(idx);
   }
 
-  renderSynthsSection() {
-    const synths = this.state.song.getSynths();
-    return synths.map((synth, idx) => (
-      <SynthComponent
-        key={idx}
-        idx={idx}
-        {...synth.instrument}
-        notes={synth.notes}
-        active={synth.active}
+  renderAuthComponent() {
+    return !this.state.user ? (
+      <AuthComponent 
+        login={credentials => this.login(credentials)} 
+        signup={credentials => this.signup(credentials)} 
+      />
+    ) : (
+      <Redirect to="/creator" />
+    );
+  }
+
+  renderCreatorComponent() {
+    return !this.state.user ? (
+      <Redirect to="/" />
+    ) : (
+      <CreatorComponent
+        getSynths={() => this.getSynths()}
+        getSamplers={() => this.getSamplers()}
+        addNewBasicSynth={() => this.addNewBasicSynth()}
         updateSynth={(idx, props) => this.updateSynth(idx, props)}
         updateSynthSequence={(idx, notes) =>
           this.updateSynthSequence(idx, notes)
         }
-        activateSynth={() => this.activateSynth(idx)}
-      />
-    ));
-  }
-
-  renderSamplerSection() {
-    const samplers = this.state.song.getSamplers();
-    return samplers.map((sampler, idx) => (
-      <DrumSamplerComponent
-        key={idx}
-        idx={idx}
-        {...sampler}
-        notes={sampler.notes}
-        active={sampler.active}
+        activateSynth={idx => this.activateSynth(idx)}
+        addNewSampler={() => this.addNewSampler()}
         updateSampler={(idx, style) => this.updateSampler(idx, style)}
         updateSamplerSequence={(idx, notes) =>
           this.updateSamplerSequence(idx, notes)
         }
-        activateSampler={() => this.activateSampler(idx)}
+        activateSampler={idx => this.activateSampler(idx)}
       />
-    ));
+    );
   }
 
-  renderCreationSection() {
-    return (
-      <div id="create-app">
-        <div id="instruments-rack">
-          <div id="add-wrapper">
-            <button onClick={() => this.addNewBasicSynth()}>Add Synth</button>
-            <button onClick={() => this.addNewSampler()}>Add Sampler</button>
-          </div>
-          {this.renderSynthsSection()}
-          {this.renderSamplerSection()}
-        </div>
-      </div>
+  renderVisualizerComponent() {
+    return !this.state.user ? <Redirect to="/" /> : <VisualizerComponent />;
+  }
+
+  renderLoadComponent() {
+    return !this.state.user ? (
+      <Redirect to="/" />
+    ) : (
+      <LoadComponent
+        userSongs={this.state.userSongs}
+        loadSongData={songData => this.loadSongData(songData)}
+      />
+    );
+  }
+
+  renderSaveComponent() {
+    return !this.state.user ? (
+      <Redirect to="/" />
+    ) : (
+      <SaveComponent saveSongData={name => this.exportSongData(name)} />
     );
   }
 
@@ -211,26 +294,44 @@ export default class App extends React.Component {
     return (
       <div className="App">
         <ControlsBar
+          user={this.state.user}
+          logout={() => this.logout()}
           isPlaying={this.state.isPlaying}
           tempo={this.state.tempo}
           play={() => this.play()}
           stop={() => this.stop()}
+          newSong={() => this.newSong()}
+          exportSongData={() => this.exportSongData()}
           updateSongTempo={newTempo => this.updateSongtempo(newTempo)}
-          addNewBasicSynth={() => this.addNewBasicSynth()}
-          addNewSampler={() => this.addNewSampler()}
         />
         <Switch>
-          <Route path="/visualizer" component={VisualizerComponent} />
+          <Route exact path="/" render={() => this.renderAuthComponent()} />
           <Route
-            path="/"
+            path="/visualizer"
+            render={() => this.renderVisualizerComponent()}
+          />
+          <Route
+            path="/creator"
             render={() => {
-              return this.renderCreationSection();
+              return this.renderCreatorComponent();
+            }}
+          />
+          <Route
+            path="/load"
+            render={() => {
+              return this.renderLoadComponent();
+            }}
+          />
+          <Route
+            path="/save"
+            render={() => {
+              return this.renderSaveComponent();
             }}
           />
         </Switch>
-        <button onClick={() => this.loadSongData()}>LOAD</button>
-        <button onClick={() => this.exportSongData()}>SAVE</button>
       </div>
     );
   }
 }
+
+export default withRouter(App);

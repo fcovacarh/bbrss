@@ -19,7 +19,7 @@ export default class BasicSynth extends Instrument {
   getSynthData = () => {
     return {
       notes: this.notes,
-      oscillator: {type: this.instrument.oscillator.type},
+      oscillator: {oscType: this.instrument.oscillator.type},
       envelope: {
         attack: this.instrument.envelope.attack,
         decay: this.instrument.envelope.decay,
