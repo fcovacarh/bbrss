@@ -6,3 +6,32 @@
     align-items: center;
 }
 
+#auth-form form {
+    background-color: #000;
+    color: #fff;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+#auth-form .input-group {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+#auth-form .input-group input {
+    background-color: #000;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: .6rem;
+    margin: .6rem;
+}
+
+#auth-form form button {
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    margin: .6rem;
+    padding: 1rem;
+}

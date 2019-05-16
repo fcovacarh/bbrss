@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import "./App.css";
 import Song from "./classes/Song.class.js";
 import ControlsBar from "./components/ControlsBar";
@@ -8,8 +8,9 @@ import AuthComponent from "./components/AuthComponent";
 import Services from "./tools/Services";
 import CreatorComponent from "./components/CreatorComponent";
 import LoadComponent from "./components/LoadComponent";
+import SaveComponent from "./components/SaveComponent";
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor() {
     super();
     this.services = new Services();
@@ -25,6 +26,15 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.fetchUser();
+  }
+
+  signup(credentials) {
+    this.services.signup(credentials).then(data => {
+      this.setState({
+        ...this.state,
+        user: data
+      });
+    });
   }
 
   login(credentials) {
@@ -93,10 +103,11 @@ export default class App extends React.Component {
     });
   }
 
-  exportSongData() {
-    console.log(this.state.song.exportSongData());
-    this.services.saveSong(this.state.song.exportSongData()).then(data => {
+  exportSongData(name) {
+    console.log(this.state.song.exportSongData(name));
+    this.services.saveSong(this.state.song.exportSongData(name)).then(data => {
       this.fetchUser();
+      this.props.history.push('/creator');
     });
   }
 
@@ -116,44 +127,11 @@ export default class App extends React.Component {
       song: new Song(),
       tempo: 130,
       isPlaying: false
-    });
+    }, this.props.history.push('/creator'));
   }
 
   loadSongData(songData) {
     this.state.song.stop();
-
-    // console.log(this.state.userSongs);
-
-    //Simulate GET call from backend
-    const fakeSongData = JSON.parse(
-      `{
-        "tempo":130,
-        "instruments":{
-          "synths":[
-            {
-              "notes":[
-                "B4",null,null,null,"A4",null,null,null,"B4",null,null,null,"A4",null,null,null
-              ],
-              "oscillator":{"type":"sine"},
-              "envelope":{
-                "attack":0.2690077039239749,
-                "decay":0.1,
-                "sustain":0.5,
-                "release":1
-              }
-            }
-          ],
-          "samplers":[
-            {
-              "notes":["C3",null,"D3",null,"C#3",null,"D3",null,"C3",null,"D3",null,"C#3",null,"D3",null],
-              "style":"house"
-            }
-          ]
-        }
-      }`
-    );
-
-    console.log(songData, fakeSongData);
 
     const newSong = new Song();
     newSong.updateTempo(songData.tempo);
@@ -177,10 +155,16 @@ export default class App extends React.Component {
       newSong.updateSamplerSequence(idx, samplerData.notes);
     });
 
-    this.setState({
-      ...this.state,
-      song: newSong
-    });
+    this.setState(
+      {
+        ...this.state,
+        song: newSong,
+        tempo: songData.tempo
+      },
+      () => {
+        this.props.history.push("/creator");
+      }
+    );
   }
 
   //SYNTHS
@@ -251,7 +235,10 @@ export default class App extends React.Component {
 
   renderAuthComponent() {
     return !this.state.user ? (
-      <AuthComponent login={credentials => this.login(credentials)} />
+      <AuthComponent 
+        login={credentials => this.login(credentials)} 
+        signup={credentials => this.signup(credentials)} 
+      />
     ) : (
       <Redirect to="/creator" />
     );
@@ -295,6 +282,14 @@ export default class App extends React.Component {
     );
   }
 
+  renderSaveComponent() {
+    return !this.state.user ? (
+      <Redirect to="/" />
+    ) : (
+      <SaveComponent saveSongData={name => this.exportSongData(name)} />
+    );
+  }
+
   render() {
     return (
       <div className="App">
@@ -327,8 +322,16 @@ export default class App extends React.Component {
               return this.renderLoadComponent();
             }}
           />
+          <Route
+            path="/save"
+            render={() => {
+              return this.renderSaveComponent();
+            }}
+          />
         </Switch>
       </div>
     );
   }
 }
+
+export default withRouter(App);

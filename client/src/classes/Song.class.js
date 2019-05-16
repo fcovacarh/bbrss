@@ -102,7 +102,7 @@ class Song {
       });
   };
 
-  exportSongData = () => {
+  exportSongData = (name) => {
     const synths = [...this.instruments.synths].map(synth =>
       synth.getSynthData()
     );
@@ -110,6 +110,7 @@ class Song {
       sampler.getSamplerData()
     );
     return {
+      name: name,
       tempo: this.tempo,
       instruments: {
         synths,

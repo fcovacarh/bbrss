@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Services from "../tools/Services";
-import './AuthComponent.css';
+import "./AuthComponent.css";
 
 export default class AuthComponent extends Component {
   constructor() {
@@ -9,7 +9,8 @@ export default class AuthComponent extends Component {
   }
 
   state = {
-    signup: false
+    signup: false,
+    errors: null
   };
 
   toggleSignup() {
@@ -21,14 +22,23 @@ export default class AuthComponent extends Component {
 
   submit(e) {
     e.preventDefault();
-    const username = e.target.username.value; 
+    const username = e.target.username.value;
     const password = e.target.password.value;
-
-    this.props.login({username, password});
+    if (this.state.signup) {
+      const secondPassword = e.target.secondPassword.value;
+      if (password !== secondPassword) {
+        this.setState({
+          ...this.state,
+          errors: "PASSWORDS DON'T MATCH"
+        });
+      }
+      this.props.signup({ username, password });
+    } else {
+      this.props.login({ username, password });
+    }
   }
 
   render() {
-    //TODO add function to onSubmit event
     return (
       <div id="auth-form">
         <form onSubmit={e => this.submit(e)}>
@@ -41,6 +51,20 @@ export default class AuthComponent extends Component {
             <label htmlFor="password">PASSWORD:</label>
             <input name="password" type="password" />
           </div>
+          {this.state.signup ? (
+            <div className="input-group">
+              <label htmlFor="secondPassword">REPEAT PASSWORD:</label>
+              <input name="secondPassword" type="password" />
+            </div>
+          ) : null}
+          <div>
+            <a onClick={() => this.toggleSignup()}>NEW? SIGN UP</a>
+          </div>
+          {this.state.errors ? (
+            <div className="form-errors">
+              <span>{this.state.errors}</span>
+            </div>
+          ) : null}
           <button>{this.state.signup ? "SIGN UP" : "LOG IN"}</button>
         </form>
       </div>

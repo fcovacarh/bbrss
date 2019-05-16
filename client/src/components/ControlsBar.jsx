@@ -44,7 +44,7 @@ export default class ControlsBar extends Component {
             {playButton}
             <button onClick={() => this.props.newSong()}>NEW</button>
             <Link to="/load"><button>LOAD</button></Link>
-            <button onClick={() => this.props.exportSongData()}>SAVE</button>
+            <Link to="/save"><button>SAVE</button></Link>
           </div>
           <div id="auth-controls">
             <button onClick={() => this.props.logout()}>LOGOUT</button>

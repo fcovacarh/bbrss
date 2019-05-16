@@ -15,6 +15,12 @@ export default class Services {
       .then(response => response.data);
   };
 
+  signup = credentials => {
+    return this.service
+      .post("/auth/signup", credentials)
+      .then(response => response.data);
+  };
+
   logout = () => {
     return this.service.get("auth/logout").then(response => response.data);
   };
