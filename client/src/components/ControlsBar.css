@@ -27,3 +27,14 @@
 #controls-bar button.stop-btn {
     background-color: #ff331c;
 }
+
+#tempo-wrapper .react-numeric-input input {
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+    padding: .8rem;
+}
+
+#tempo-wrapper .react-numeric-input b i {
+    color: #fff;
+}

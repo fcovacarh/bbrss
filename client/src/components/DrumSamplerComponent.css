@@ -1,6 +1,6 @@
 .sampler {
     width: 40vw;
-    height: auto;
+    height: fit-content;
     background-color: #000;
     color: #fff;
     display: flex;

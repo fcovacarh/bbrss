@@ -15,27 +15,25 @@ export default class Services {
       .then(response => response.data);
   };
 
+  logout = () => {
+    return this.service.get("auth/logout").then(response => response.data);
+  };
+
   isLoggedIn = () => {
     return this.service.get("/auth/loggedin").then(response => response.data);
   };
 
-  //   all = () => {
-  //     return this.service.get(`/all`).then(data => data.data);
-  //   };
+  saveSong = songProperties => {
+    return this.service
+      .post("/song/create", songProperties)
+      .then(response => response.data)
+      .catch(err => err);
+  };
 
-  //   oneData = id => {
-  //     return this.service.get(`/one/${id}`).then(data => data.data);
-  //   };
-
-  //   newOne = data => {
-  //     return this.service.post(`/new`, data);
-  //   };
-
-  //   updateOne = (id, data) => {
-  //     return this.service.put(`/update/${id}`, data);
-  //   };
-
-  //   deleteOne = id => {
-  //     return this.service.delete(`/delete/${id}`);
-  //   };
+  getUserSongs = songProperties => {
+    return this.service
+      .get("/song/mySongs")
+      .then(response => response.data)
+      .catch(err => err);
+  };
 }

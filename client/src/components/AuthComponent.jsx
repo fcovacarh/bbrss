@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Services from "../tools/Services";
+import './AuthComponent.css';
 
 export default class AuthComponent extends Component {
   constructor() {
@@ -23,11 +24,7 @@ export default class AuthComponent extends Component {
     const username = e.target.username.value; 
     const password = e.target.password.value;
 
-    console.log(username, password);
-
-    this.services.login({username, password}).then(user => {
-        this.props.login();
-    });
+    this.props.login({username, password});
   }
 
   render() {

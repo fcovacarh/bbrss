@@ -13,23 +13,30 @@ class Song {
   }
 
   init = () => {
+    console.log('init');
+    Tone.Transport.cancel();
     Tone.Transport.bpm.value = this.tempo;
-  }
+  };
 
   play = () => {
     console.log("playing...");
-    if(Tone.Transport.state === "stopped") {Tone.Transport.start(); this.playInstruments()}
+    if (Tone.Transport.state === "stopped") {
+      Tone.Transport.start();
+      this.playInstruments();
+    }
   };
 
   stop = () => {
     console.log("stopped");
-      if(Tone.Transport.state === "started") Tone.Transport.stop();
+    if (Tone.Transport.state === "started") {
+      Tone.Transport.stop();
+    }
   };
 
-  updateTempo = (newTempo) => {
+  updateTempo = newTempo => {
     this.tempo = newTempo;
     Tone.Transport.bpm.value = this.tempo;
-  }
+  };
 
   //SYNTHS
   addBasicSynth = (id, type = "triangle") => {
@@ -85,30 +92,30 @@ class Song {
 
   playInstruments = () => {
     this.instruments.synths
-    .concat(this.instruments.samplers)
-    .forEach(instrument => {
-      Tone.Transport.schedule((time) => {
-        if(instrument && instrument.sequence){
-          instrument.sequence.start();
-        }
-      }, '0:0');
-    });
+      .concat(this.instruments.samplers)
+      .forEach(instrument => {
+        Tone.Transport.schedule(time => {
+          if (instrument && instrument.sequence) {
+            instrument.sequence.start();
+          }
+        }, "0:0");
+      });
   };
 
   exportSongData = () => {
-    const synths = [...this.instruments.synths].map(synth => synth.getSynthData());
-    const samplers = [...this.instruments.samplers].map(sampler => sampler.getSamplerData());
+    const synths = [...this.instruments.synths].map(synth =>
+      synth.getSynthData()
+    );
+    const samplers = [...this.instruments.samplers].map(sampler =>
+      sampler.getSamplerData()
+    );
     return {
       tempo: this.tempo,
       instruments: {
         synths,
         samplers
       }
-    }
-  };
-
-  loadSongData = songData => {
-    
+    };
   };
 }
 
