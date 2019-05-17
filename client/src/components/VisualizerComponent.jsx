@@ -1,8 +1,7 @@
 import React, { Component } from "react";
+import "./VisualizerComponent.css";
 import Tone from "tone";
 import * as THREE from "three";
-import "./VisualizerComponent.css";
-
 const OrbitControls = require("three-orbit-controls")(THREE);
 
 export default class VisualizerComponent extends Component {
@@ -16,6 +15,7 @@ export default class VisualizerComponent extends Component {
     this.camera = null;
     this.renderer = null;
     this.sphere = null;
+    this.cubes = [];
     this.controls = require("three-orbit-controls")(THREE);
     this.iteration = 0;
     Tone.Master.connect(this.analyser);
@@ -37,8 +37,41 @@ export default class VisualizerComponent extends Component {
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
-    const values = this.analyser.getValue();
-    const RADIUS = 50;
+    const sphere = this.createSphere();
+    this.scene.add(sphere);
+    this.sphere = sphere;
+
+    const offset = 50;
+    const cube1 = this.createCube(-offset, -offset);
+    this.scene.add(cube1);
+    this.cubes.push(cube1);
+
+    const cube2 = this.createCube(offset, -offset);
+    this.scene.add(cube2);
+    this.cubes.push(cube2);
+
+    const cube3 = this.createCube(-offset, offset);
+    this.scene.add(cube3);
+    this.cubes.push(cube3);
+
+    const cube4 = this.createCube(offset, offset);
+    this.scene.add(cube4);
+    this.cubes.push(cube4);
+
+    this.renderer.render(this.scene, this.camera);
+    this.draw();
+  }
+
+  toggleEpilepsyMode = () => {
+    console.log(!this.state.epilepsyMode);
+    this.setState({
+      ...this.state,
+      epilepsyMode: !this.state.epilepsyMode
+    });
+  };
+
+  createSphere = () => {
+    const RADIUS = 70;
     const SEGMENTS = 16;
     const RINGS = 16;
 
@@ -56,48 +89,83 @@ export default class VisualizerComponent extends Component {
     sphere.position.x = 0;
     sphere.position.z = 0;
 
-    // Finally, add the sphere to the scene.
-    this.scene.add(sphere);
-    this.sphere = sphere;
-    this.renderer.render(this.scene, this.camera);
-    this.draw();
-  }
+    return sphere;
+  };
 
-  toggleEpilepsyMode = () => {
-    console.log(!this.state.epilepsyMode);
-    this.setState({
-      ...this.state,
-      epilepsyMode: !this.state.epilepsyMode
+  createCube = (posX, posZ) => {
+    const WIDTH = 10;
+    const HEIGHT = 10;
+    const DEPTH = 10;
+
+    const cubeGeometry = new THREE.BoxGeometry(WIDTH, HEIGHT, DEPTH);
+
+    const cubeMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      wireframe: true
     });
+
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+    // Move the cube back in Z so we
+    // can see it.
+    cube.position.x = posX;
+    cube.position.z = posZ;
+
+    return cube;
+  };
+
+  animateSphere = (value, threshold) => {
+    const freqThreshold = 20;
+    if (this.state.epilepsyMode) {
+      if (value > freqThreshold && this.iteration % threshold !== 0) {
+        this.sphere.scale.set(value / 500, value / 500, value / 500);
+      } else {
+        this.sphere.scale.set(16, 16, 16);
+      }
+    } else {
+      if (value > freqThreshold) {
+        this.sphere.scale.set(value / 500, value / 500, value / 500);
+      } else {
+        this.sphere.scale.set(1, 1, 1);
+      }
+    }
+    this.sphere.rotation.y += 0.1;
+    if (this.renderer) this.renderer.render(this.scene, this.camera);
+  };
+
+  animateCube = (idx, value, threshold) => {
+    const freqThreshold = 10;
+    if (this.state.epilepsyMode) {
+      if (value > freqThreshold && this.iteration % threshold !== 0) {
+        this.cubes[idx].scale.set(value / 100, value / 100, value / 100);
+      } else {
+        this.cubes[idx].scale.set(16, 16, 16);
+      }
+    } else {
+      if (value > freqThreshold) {
+        this.cubes[idx].scale.set(value / 100, value / 100, value / 100);
+      } else {
+        this.cubes[idx].scale.set(0.1, 0.1, 0.1);
+      }
+    }
+
+    if (idx % 2 === 0) {
+      this.cubes[idx].rotation.z += 0.1;
+    } else {
+      this.cubes[idx].rotation.z -= 0.1;
+    }
+
+    if (this.renderer) this.renderer.render(this.scene, this.camera);
   };
 
   draw = () => {
     const bassValue = Math.abs(this.analyser.getValue()[0]);
     const highValue = Math.abs(this.analyser.getValue()[15]);
     const threshold = 8;
-    if (this.state.epilepsyMode) {
-      if (bassValue > 20 && this.iteration % threshold === 0) {
-        this.sphere.scale.set(
-          bassValue / 100,
-          bassValue / 100,
-          bassValue / 100
-        );
-      } else {
-        this.sphere.scale.set(16, 16, 16);
-      }
-    } else {
-      if (bassValue > 20) {
-        this.sphere.scale.set(
-          bassValue / 100,
-          bassValue / 100,
-          bassValue / 100
-        );
-      } else {
-        this.sphere.scale.set(1, 1, 1);
-      }
-    }
-    this.sphere.rotation.y += 0.5;
-    if (this.renderer) this.renderer.render(this.scene, this.camera);
+    this.animateSphere(bassValue, threshold);
+    this.cubes.forEach((_, idx) =>
+      this.animateCube(idx, highValue, threshold)
+    );
     this.iteration > threshold ? (this.iteration = 1) : this.iteration++;
     requestAnimationFrame(this.draw);
   };
@@ -111,7 +179,7 @@ export default class VisualizerComponent extends Component {
             className={this.state.epilepsyMode ? "btn-on" : "btn-off"}
             onClick={() => this.toggleEpilepsyMode()}
           >
-            EPILEPSY MODE: {this.state.epilepsyMode ? 'ON' : 'OFF'}
+            EPILEPSY MODE: {this.state.epilepsyMode ? "ON" : "OFF"}
           </button>
         </div>
       </React.Fragment>
